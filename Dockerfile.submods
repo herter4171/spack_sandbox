@@ -1,0 +1,10 @@
+FROM spack_mpich
+
+WORKDIR /opt/moose
+
+RUN /bin/bash -lc 'spack load gcc ; ./scripts/update_and_rebuild_petsc.sh ${PETSC_OPTIONS} --download-cmake'
+
+ARG MOOSE_JOBS=36
+
+RUN /bin/bash -lc 'spack load gcc; METHODS="opt" libmesh_CPPFLAGS="-D LIBMESH_HAVE_XDR" ./scripts/update_and_rebuild_libmesh.sh'
+

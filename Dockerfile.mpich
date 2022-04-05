@@ -1,0 +1,8 @@
+FROM spack_test
+
+COPY build_mpich.sh .
+
+RUN /bin/bash -l build_mpich.sh
+
+ENV CC=mpicc \
+CXX=mpicxx
