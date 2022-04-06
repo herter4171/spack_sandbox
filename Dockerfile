@@ -15,7 +15,7 @@ git submodule update --init --recursive
 ENV SPACK_SRC=". /opt/spack/share/spack/setup-env.sh"
 ARG GCC_VER=10.3.0
 
-# Install Spack
+# Install Spack, texinfo to enable GCC, and GCC
 RUN git clone -c feature.manyFiles=true https://github.com/spack/spack.git ; \
 $SPACK_SRC ; \
 spack compiler find ; \
@@ -24,6 +24,12 @@ spack load texinfo ; \
 spack install -j `nproc` gcc@$GCC_VER ; \
 spack load gcc@$GCC_VER ; \
 spack compiler find
+
+# Install MPICH
+RUN sed -i 's|flags.*$|flags:\n      fflags: -fallow-argument-mismatch|g' /root/.spack/linux/compilers.yaml ; \
+$SPACK_SRC ; \
+spack load gcc@$GCC_VER ; \
+spack install -j `nproc` --reuse mpich %gcc@$GCC_VER
 
 # Ensure Spack loads on launch
 RUN printf "$SPACK_SRC" >> /etc/profile
